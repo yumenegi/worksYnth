@@ -22,6 +22,7 @@
 #include "psg.h"
 #include "stm32f4xx_hal.h"
 #include "stm32f4xx_hal_gpio.h"
+#include "stm32f4xx_hal_uart.h"
 #include <stdint.h>
 
 /* Private includes ----------------------------------------------------------*/
@@ -47,6 +48,7 @@
 /* Private variables ---------------------------------------------------------*/
 TIM_HandleTypeDef htim3;
 UART_HandleTypeDef huart2;
+DMA_HandleTypeDef hdma_usart2_rx;
 
 /* USER CODE BEGIN PV */
 
@@ -57,6 +59,7 @@ void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void SN76489_GPIO_Init(void);
 static void MX_USART2_UART_Init(void);
+static void MX_DMA_Init(void);
 static void TIM3_Init(void);
 static void playFamima(void);
 
@@ -94,16 +97,20 @@ int main(void) {
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
+  MX_DMA_Init();
   TIM3_Init();
+  SN76489_GPIO_Init();
+  MX_USART2_UART_Init();
+
+  // Mute All
+  PSG_Init();
   if (HAL_TIM_OC_Start(&htim3, TIM_CHANNEL_2) != HAL_OK) {
     // Starting the timer failed
     Error_Handler();
   }
-  SN76489_GPIO_Init();
-  MX_USART2_UART_Init();
-  // Mute All
-  PSG_Init();
-  HAL_Delay(WHOLE_DELAY_MS_95BPM);
+
+  // Start DMA operation
+  HAL_UARTEx_RxEventCallback(&huart2, 64);
 
   /* Main loop */
   while (1) {
@@ -403,6 +410,24 @@ void TIM3_Init(void) {
   }
 
   HAL_TIM_MspPostInit(&htim3);
+}
+
+/**
+ * Enable DMA controller clock
+ */
+static void MX_DMA_Init(void) {
+
+  /* DMA controller clock enable */
+  __HAL_RCC_DMA1_CLK_ENABLE();
+
+  /* DMA interrupt init */
+  /* DMA1_Stream5_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(DMA1_Stream5_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(DMA1_Stream5_IRQn);
+}
+
+/// @todo Implement idle callback
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
 }
 
 /**
