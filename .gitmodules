@@ -1,0 +1,3 @@
+[submodule "dev/device-specific/drivers/opn2"]
+	path = dev/device-specific/drivers/opn2
+	url = git@github.com:yumenegi/opn2.git
