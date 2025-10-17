@@ -2,6 +2,7 @@
 
 #include "cmsis_gcc.h"
 #include "main.h"
+#include "gpio_config.h"
 #include "stm32f4xx_hal.h"
 #include <stdint.h>
 

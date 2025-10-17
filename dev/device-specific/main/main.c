@@ -18,6 +18,8 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+
+#include "gpio_config.h"
 #include "note_freq.h"
 #include "psg.h"
 #include "stm32f4xx_hal.h"

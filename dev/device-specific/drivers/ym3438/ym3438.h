@@ -10,7 +10,11 @@
 #ifndef YM3438_H_
 #define YM3438_H_
 
+#include "gpio_config.h"
 #include <stdint.h>
+
+#define YM3438_WR_HIGH() YM3438_GPIO_WR_PORT->BSRR = (YM3438_GPIO_WR_PIN)
+#define YM3438_WR_LOW() YM3438_GPIO_WR_PORT->BSRR = (YM3438_GPIO_WR_PIN << 16)
 
 void YM3438_AddressWriteMode(uint8_t address, uint8_t bank);
 
